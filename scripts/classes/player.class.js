@@ -1,6 +1,7 @@
 import { Character } from "./character.superclass.js";
 import { CharacterController } from "./characterController.js";
 import { Projectile } from "./projectile.class.js";
+import { Hitbox } from "./hitbox.class.js";
 export class Player extends Character {
     speed = 5;
     jumpForce = 15;
@@ -30,6 +31,13 @@ export class Player extends Character {
     projectileSpeed = 10;
     projectiles = [];
     projectileImgSrc = "../../assets/spritesheets/projectiles/Player_Proj_spritesheet.png";
+    hitbox;
+    hitboxOffsetX = -25;
+    hitboxOffsetY = -15;
+    hitboxOffsetWidth = -50;
+    hitboxOffsetHeight = -30;
+    width = 100;
+    height = 100;
     constructor(world, startingPositionX, startingPositionY) {
         super(world, startingPositionX, startingPositionY);
         this.img = new Image();
@@ -41,6 +49,7 @@ export class Player extends Character {
         this.imageLeft = new Image();
         this.imageLeft.src = this.imageSrcLeft;
         this.gameframe = 0;
+        this.hitbox = new Hitbox(this, this.ctx, this.width, this.height, this.hitboxOffsetX, this.hitboxOffsetY, this.hitboxOffsetWidth, this.hitboxOffsetHeight);
     }
     update() {
         this.checkDirection();
@@ -49,10 +58,12 @@ export class Player extends Character {
         this.checkGravity();
         this.updateProjectiles();
         this.removeProjectiles();
+        this.hitbox.update();
     }
     draw() {
-        this.ctx.drawImage(this.img, this.frameWidth * this.spriteposition, this.frameHeight * this.animationRow, this.frameWidth, this.frameHeight, this.x, this.y, 100, 100);
+        this.ctx.drawImage(this.img, this.frameWidth * this.spriteposition, this.frameHeight * this.animationRow, this.frameWidth, this.frameHeight, this.x, this.y, this.width, this.height);
         this.drawProjectiles();
+        this.hitbox.draw();
     }
     checkDirection() {
         if (this.playerstate.direction === "right") {
@@ -241,7 +252,7 @@ export class Player extends Character {
     }
     removeProjectiles() {
         this.projectiles = this.projectiles.filter((projectile) => {
-            !projectile.removeProj;
+            return !projectile.removeProj;
         });
     }
     checkShoot(spritetype) {

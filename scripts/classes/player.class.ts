@@ -2,6 +2,7 @@ import { Character } from "./character.superclass.ts";
 import { World } from "./world.class.ts";
 import { CharacterController } from "./characterController.ts";
 import { Projectile } from "./projectile.class.ts";
+import { Hitbox } from "./hitbox.class.ts";
 
 export class Player extends Character {
   speed: number = 5;
@@ -33,6 +34,13 @@ export class Player extends Character {
   projectiles: Projectile[] = [];
   projectileImgSrc: string =
     "../../assets/spritesheets/projectiles/Player_Proj_spritesheet.png";
+  hitbox!: Hitbox;
+  hitboxOffsetX: number = -25;
+  hitboxOffsetY: number = -15;
+  hitboxOffsetWidth: number = -50;
+  hitboxOffsetHeight: number = -30;
+  width: number = 100;
+  height: number = 100;
 
   constructor(
     world: World,
@@ -49,6 +57,16 @@ export class Player extends Character {
     this.imageLeft = new Image();
     this.imageLeft.src = this.imageSrcLeft;
     this.gameframe = 0;
+    this.hitbox = new Hitbox(
+      this,
+      this.ctx,
+      this.width,
+      this.height,
+      this.hitboxOffsetX,
+      this.hitboxOffsetY,
+      this.hitboxOffsetWidth,
+      this.hitboxOffsetHeight
+    );
   }
 
   update(): void {
@@ -58,6 +76,7 @@ export class Player extends Character {
     this.checkGravity();
     this.updateProjectiles();
     this.removeProjectiles();
+    this.hitbox.update();
   }
 
   draw(): void {
@@ -69,10 +88,11 @@ export class Player extends Character {
       this.frameHeight,
       this.x,
       this.y,
-      100,
-      100
+      this.width,
+      this.height
     );
     this.drawProjectiles();
+    this.hitbox.draw();
   }
 
   checkDirection() {
@@ -290,7 +310,7 @@ export class Player extends Character {
 
   removeProjectiles() {
     this.projectiles = this.projectiles.filter((projectile) => {
-      !projectile.removeProj;
+      return !projectile.removeProj;
     });
   }
 

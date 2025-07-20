@@ -1,3 +1,4 @@
+import { Hitbox } from "./hitbox.class.ts";
 import { Player } from "./player.class.ts";
 import { World } from "./world.class.ts";
 
@@ -10,8 +11,8 @@ export class Projectile {
   projectileSpeed!: number;
   originClass!: Player;
   ctx!: CanvasRenderingContext2D;
-  width!: number;
-  height!: number;
+  spriteWidth!: number;
+  spriteHeight!: number;
   spritePosition: number = 0;
   spriteRow!: number;
   origin: string = "player";
@@ -19,6 +20,16 @@ export class Projectile {
   direction: string = "right";
   projectileSizeWidth!: number;
   projectileSizeHeight!: number;
+  hitbox: Hitbox = new Hitbox(
+    this,
+    this.ctx,
+    this.projectileSizeWidth,
+    this.projectileSizeHeight,
+    0,
+    0,
+    0,
+    0
+  );
 
   constructor(img: string, originClass: Player, ctx: CanvasRenderingContext2D) {
     console.log("proj init");
@@ -31,16 +42,17 @@ export class Projectile {
     this.projectileSpeed = originClass.projectileSpeed;
     this.originClass = originClass;
     this.ctx = ctx;
+    console.log(this.ctx);
     if (originClass instanceof Player) {
       this.spriteRow = 0;
-      this.width = 1666;
-      this.height = 1070;
+      this.spriteWidth = 1660;
+      this.spriteHeight = 1070;
       this.origin = "player";
-      this.projectileSizeHeight = 300;
-      this.projectileSizeWidth = 400;
+      this.projectileSizeHeight = 100;
+      this.projectileSizeWidth = 150;
     } else {
-      this.width = 20;
-      this.height = 20;
+      this.spriteWidth = 20;
+      this.spriteHeight = 20;
       this.origin = "boss";
     }
     this.direction = originClass.playerstate.direction;
@@ -50,20 +62,22 @@ export class Projectile {
     this.moveProj();
     this.checkIfOutOfScreen();
     this.animateProj();
+    this.hitbox.update();
   }
 
   draw() {
     this.ctx.drawImage(
       this.img,
-      this.width * this.spritePosition,
-      this.height * this.spriteRow,
-      this.width,
-      this.height,
+      this.spriteWidth * this.spritePosition,
+      this.spriteHeight * this.spriteRow,
+      this.spriteWidth,
+      this.spriteHeight,
       this.x,
       this.y,
       this.projectileSizeWidth,
       this.projectileSizeHeight
     );
+    this.hitbox.draw();
   }
 
   moveProj() {
@@ -75,7 +89,7 @@ export class Projectile {
   }
 
   checkIfOutOfScreen() {
-    if (this.x + this.width < 0) {
+    if (this.x + this.spriteWidth < 0) {
       this.removeProj = true;
     } else if (this.x > this.world.width) {
       this.removeProj = true;
@@ -84,7 +98,7 @@ export class Projectile {
 
   animateProj() {
     if (this.origin === "player") {
-      if (this.spritePosition > 40) this.removeProj = true;
+      if (this.spritePosition > 15) this.spritePosition = 10;
       this.spritePosition++;
     } else {
     }
