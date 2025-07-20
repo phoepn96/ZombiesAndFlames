@@ -2,6 +2,8 @@ import { Player } from "./player.class";
 
 export class CharacterController {
   keyManager: { [key: string]: boolean } = {};
+  attackHandler: boolean = false;
+  dashHandeler: boolean = false;
 
   constructor(private player: Player) {
     window.addEventListener("keydown", (event) => {
@@ -21,18 +23,34 @@ export class CharacterController {
         this.keyManager["ArrowRight"] = false;
       }
 
-      if (event.key === " ") {
-        if (player.playerstate.movement.type === "grounded") {
-          player.gameframe = 0;
+      if (
+        player.playerstate.movement.type === "grounded" &&
+        player.playerstate.status != "attacking"
+      ) {
+        if (event.key === " ") {
+          player.spriteposition = 0;
           player.playerstate.movement = {
             type: "airborne",
             phase: "starting",
           };
         }
       }
+      if (event.key === "Control") {
+        if (!this.dashHandeler && this.player.playerstate.status != "dashing") {
+          player.spriteposition = 0;
+          player.playerstate.status = "dashing";
+          this.dashHandeler = true;
+        }
+      }
       if (event.key === "f") {
-        player.gameframe = 0;
-        player.playerstate.status = "attacking";
+        if (
+          !this.attackHandler &&
+          this.player.playerstate.status != "attacking"
+        ) {
+          player.spriteposition = 0;
+          player.playerstate.status = "attacking";
+          this.attackHandler = true;
+        }
       }
     });
 
@@ -42,9 +60,18 @@ export class CharacterController {
         this.keyManager["d"] === false &&
         this.keyManager["ArrowLeft"] === false &&
         this.keyManager["a"] === false &&
-        this.keyManager["ArrowRight"] === false
+        this.keyManager["ArrowRight"] === false &&
+        this.player.playerstate.status != "attacking" &&
+        this.player.playerstate.status != "dashing"
       ) {
         player.playerstate.status = "idle";
+      }
+
+      if (event.key === "Control") {
+        this.dashHandeler = false;
+      }
+      if (event.key === "f") {
+        this.attackHandler = false;
       }
     });
   }
