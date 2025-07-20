@@ -1,6 +1,7 @@
 import { Character } from "./character.superclass.ts";
 import { World } from "./world.class.ts";
 import { CharacterController } from "./characterController.ts";
+import { Projectile } from "./projectile.class.ts";
 
 export class Player extends Character {
   speed: number = 5;
@@ -28,6 +29,10 @@ export class Player extends Character {
   goundLevel: number = this.y;
   gameframe!: number;
   dashdistance: number = 19;
+  projectileSpeed = 10;
+  projectiles: Projectile[] = [];
+  projectileImgSrc: string =
+    "../../assets/spritesheets/projectiles/Player_Proj_spritesheet.png";
 
   constructor(
     world: World,
@@ -51,6 +56,8 @@ export class Player extends Character {
     this.checkAction();
     this.animateAction();
     this.checkGravity();
+    this.updateProjectiles();
+    this.removeProjectiles();
   }
 
   draw(): void {
@@ -65,6 +72,7 @@ export class Player extends Character {
       100,
       100
     );
+    this.drawProjectiles();
   }
 
   checkDirection() {
@@ -85,9 +93,6 @@ export class Player extends Character {
     if (this.playerstate.status === "moving") {
       this.move();
     }
-    if (this.playerstate.status === "attacking") {
-      this.attack();
-    }
     if (this.playerstate.status === "dashing") {
       this.dash();
     }
@@ -107,10 +112,6 @@ export class Player extends Character {
     }
   }
 
-  attack() {
-    if (this.playerstate.movement.type === "grounded") {
-    }
-  }
   dash() {
     if (this.playerstate.direction === "right") {
       this.x += this.dashdistance;
@@ -118,7 +119,12 @@ export class Player extends Character {
     }
     this.x -= this.dashdistance;
   }
-  shoot() {}
+
+  shoot() {
+    this.projectiles.push(
+      new Projectile(this.projectileImgSrc, this, this.ctx)
+    );
+  }
 
   move() {
     if (this.playerstate.direction === "right") {
@@ -250,6 +256,7 @@ export class Player extends Character {
     if (this.playerstate.direction === "right") {
       if (this.spriteposition === SpriteFrameCount[spriteTyp]) {
         this.playerstate.status = "moving";
+        this.checkShoot(spriteTyp);
       }
     } else {
       if (
@@ -257,6 +264,7 @@ export class Player extends Character {
         this.maxFrameCount - SpriteFrameCount[spriteTyp] + 1
       ) {
         this.playerstate.status = "moving";
+        this.checkShoot(spriteTyp);
       }
     }
   }
@@ -265,6 +273,33 @@ export class Player extends Character {
     if (this.y < this.goundLevel) {
       this.y += this.gravity;
       this.gravity += 0.8;
+    }
+  }
+
+  updateProjectiles() {
+    this.projectiles.forEach((projectile) => {
+      projectile.update();
+    });
+  }
+
+  drawProjectiles() {
+    this.projectiles.forEach((projectile) => {
+      projectile.draw();
+    });
+  }
+
+  removeProjectiles() {
+    this.projectiles = this.projectiles.filter((projectile) => {
+      !projectile.removeProj;
+    });
+  }
+
+  checkShoot(spritetype: SpriteTypes) {
+    if (
+      spritetype === SpriteTypes.slashing ||
+      spritetype === SpriteTypes.slahingAir
+    ) {
+      this.shoot();
     }
   }
 }
