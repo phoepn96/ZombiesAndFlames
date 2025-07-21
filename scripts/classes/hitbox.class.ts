@@ -1,4 +1,3 @@
-import { Character } from "./character.superclass.ts";
 import { Player } from "./player.class.ts";
 import { Projectile } from "./projectile.class.ts";
 import { World } from "./world.class.ts";
@@ -18,7 +17,6 @@ export class Hitbox {
 
   constructor(
     originClass: Player | Projectile,
-    ctx: CanvasRenderingContext2D,
     width: number,
     height: number,
     offsetX: number,
@@ -26,7 +24,6 @@ export class Hitbox {
     offsetWidth: number,
     offsetHeight: number
   ) {
-    this.world = originClass.world;
     this.ctx = originClass.ctx;
     this.originClass = originClass;
     this.offsetX = offsetX;
@@ -37,7 +34,6 @@ export class Hitbox {
     this.y = originClass.y;
     this.width = width + offsetWidth;
     this.height = height + offsetHeight;
-    console.log(ctx);
   }
 
   update() {

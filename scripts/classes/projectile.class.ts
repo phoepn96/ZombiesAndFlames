@@ -20,19 +20,13 @@ export class Projectile {
   direction: string = "right";
   projectileSizeWidth!: number;
   projectileSizeHeight!: number;
-  hitbox: Hitbox = new Hitbox(
-    this,
-    this.ctx,
-    this.projectileSizeWidth,
-    this.projectileSizeHeight,
-    0,
-    0,
-    0,
-    0
-  );
+  hitbox!: Hitbox;
+  hitboxOffsetX: number = -50;
+  hitboxOffsetY: number = -40;
+  hitboxOffsetWidth: number = -80;
+  hitboxOffsetHeight: number = -70;
 
   constructor(img: string, originClass: Player, ctx: CanvasRenderingContext2D) {
-    console.log("proj init");
     this.imgSrc = img;
     this.img = new Image();
     this.img.src = this.imgSrc;
@@ -42,7 +36,7 @@ export class Projectile {
     this.projectileSpeed = originClass.projectileSpeed;
     this.originClass = originClass;
     this.ctx = ctx;
-    console.log(this.ctx);
+
     if (originClass instanceof Player) {
       this.spriteRow = 0;
       this.spriteWidth = 1660;
@@ -56,6 +50,16 @@ export class Projectile {
       this.origin = "boss";
     }
     this.direction = originClass.playerstate.direction;
+
+    this.hitbox = new Hitbox(
+      this,
+      this.projectileSizeWidth,
+      this.projectileSizeHeight,
+      this.hitboxOffsetX,
+      this.hitboxOffsetY,
+      this.hitboxOffsetWidth,
+      this.hitboxOffsetHeight
+    );
   }
 
   update() {

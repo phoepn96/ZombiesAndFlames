@@ -49,7 +49,7 @@ export class Player extends Character {
         this.imageLeft = new Image();
         this.imageLeft.src = this.imageSrcLeft;
         this.gameframe = 0;
-        this.hitbox = new Hitbox(this, this.ctx, this.width, this.height, this.hitboxOffsetX, this.hitboxOffsetY, this.hitboxOffsetWidth, this.hitboxOffsetHeight);
+        this.hitbox = new Hitbox(this, this.width, this.height, this.hitboxOffsetX, this.hitboxOffsetY, this.hitboxOffsetWidth, this.hitboxOffsetHeight);
     }
     update() {
         this.checkDirection();

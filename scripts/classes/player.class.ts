@@ -59,7 +59,6 @@ export class Player extends Character {
     this.gameframe = 0;
     this.hitbox = new Hitbox(
       this,
-      this.ctx,
       this.width,
       this.height,
       this.hitboxOffsetX,

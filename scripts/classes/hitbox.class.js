@@ -10,8 +10,7 @@ export class Hitbox {
     offsetY;
     offsetWidth;
     offsetHeight;
-    constructor(originClass, ctx, width, height, offsetX, offsetY, offsetWidth, offsetHeight) {
-        this.world = originClass.world;
+    constructor(originClass, width, height, offsetX, offsetY, offsetWidth, offsetHeight) {
         this.ctx = originClass.ctx;
         this.originClass = originClass;
         this.offsetX = offsetX;
@@ -22,7 +21,6 @@ export class Hitbox {
         this.y = originClass.y;
         this.width = width + offsetWidth;
         this.height = height + offsetHeight;
-        console.log(ctx);
     }
     update() {
         this.x = this.originClass.x - this.offsetX;
