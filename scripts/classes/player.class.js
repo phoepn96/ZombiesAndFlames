@@ -11,13 +11,12 @@ export class Player extends Character {
     imageRight;
     imageSrcLeft = "../../assets/spritesheets/player/playerLeft2.png";
     imageLeft;
-    ctx;
     frameWidth = 909.16;
     frameHeight = 909.16;
     animationRow = 0;
     spriteposition = 0;
     maxFrameCount = 23;
-    playerstate = {
+    state = {
         movement: { type: "grounded" },
         status: "idle",
         direction: "right",
@@ -42,7 +41,6 @@ export class Player extends Character {
         super(world, startingPositionX, startingPositionY);
         this.img = new Image();
         this.img.src = this.imageSrc;
-        this.ctx = world.ctx;
         this.controller = new CharacterController(this);
         this.gravity = world.gravity;
         this.imageRight = this.img;
@@ -66,7 +64,7 @@ export class Player extends Character {
         this.hitbox.draw();
     }
     checkDirection() {
-        if (this.playerstate.direction === "right") {
+        if (this.state.direction === "right") {
             this.img = this.imageRight;
             return;
         }
@@ -75,13 +73,13 @@ export class Player extends Character {
     checkAction() {
         this.checkMovementState();
         this.checkIdle();
-        if (this.playerstate.movement.type === "airborne") {
+        if (this.state.movement.type === "airborne") {
             this.jump();
         }
-        if (this.playerstate.status === "moving") {
+        if (this.state.status === "moving") {
             this.move();
         }
-        if (this.playerstate.status === "dashing") {
+        if (this.state.status === "dashing") {
             this.dash();
         }
     }
@@ -90,14 +88,14 @@ export class Player extends Character {
             !this.controller.keyManager["d"] &&
             !this.controller.keyManager["ArrowLeft"] &&
             !this.controller.keyManager["ArrowRight"] &&
-            this.playerstate.movement.type === "grounded" &&
-            this.playerstate.status != "attacking" &&
-            this.playerstate.status != "dashing") {
-            this.playerstate.status = "idle";
+            this.state.movement.type === "grounded" &&
+            this.state.status != "attacking" &&
+            this.state.status != "dashing") {
+            this.state.status = "idle";
         }
     }
     dash() {
-        if (this.playerstate.direction === "right") {
+        if (this.state.direction === "right") {
             this.x += this.dashdistance;
             return;
         }
@@ -107,7 +105,7 @@ export class Player extends Character {
         this.projectiles.push(new Projectile(this.projectileImgSrc, this, this.ctx));
     }
     move() {
-        if (this.playerstate.direction === "right") {
+        if (this.state.direction === "right") {
             this.x += this.speed;
             return;
         }
@@ -117,64 +115,64 @@ export class Player extends Character {
         this.y -= this.jumpForce;
     }
     animateAction() {
-        if (this.playerstate.status === "dead") {
+        if (this.state.status === "dead") {
             this.animationRow == SpriteTypes.dying;
             this.calculateGameFrame(SpriteTypes.dying);
             return;
         }
-        if (this.playerstate.status === "hurt") {
+        if (this.state.status === "hurt") {
             this.animationRow === SpriteTypes.hurt;
             this.calculateGameFrame(SpriteTypes.hurt);
             return;
         }
-        if (this.playerstate.movement.type === "airborne") {
-            if (this.playerstate.status === "dashing") {
+        if (this.state.movement.type === "airborne") {
+            if (this.state.status === "dashing") {
                 this.animationRow = SpriteTypes.sliding;
                 this.calculateGameFrame(SpriteTypes.sliding);
                 this.stopAnimation(SpriteTypes.sliding);
                 return;
             }
-            if (this.playerstate.status === "attacking") {
+            if (this.state.status === "attacking") {
                 this.animationRow = SpriteTypes.slahingAir;
                 this.calculateGameFrame(SpriteTypes.slahingAir);
                 this.stopAnimation(SpriteTypes.slahingAir);
                 return;
             }
-            if (this.playerstate.movement.phase === "starting") {
+            if (this.state.movement.phase === "starting") {
                 this.animationRow = SpriteTypes.jumpstart;
                 this.calculateGameFrame(SpriteTypes.jumpstart);
                 this.stopAnimation(SpriteTypes.jumpstart);
                 return;
             }
-            if (this.playerstate.movement.phase === "ascending") {
+            if (this.state.movement.phase === "ascending") {
                 this.animationRow = SpriteTypes.ascending;
                 this.calculateGameFrame(SpriteTypes.ascending);
                 return;
             }
-            if (this.playerstate.movement.phase === "descending") {
+            if (this.state.movement.phase === "descending") {
                 this.animationRow = SpriteTypes.descending;
                 this.calculateGameFrame(SpriteTypes.descending);
                 return;
             }
         }
-        if (this.playerstate.movement.type === "grounded") {
-            if (this.playerstate.status === "attacking") {
+        if (this.state.movement.type === "grounded") {
+            if (this.state.status === "attacking") {
                 this.animationRow = SpriteTypes.slashing;
                 this.calculateGameFrame(SpriteTypes.slashing);
                 this.stopAnimation(SpriteTypes.slashing);
                 return;
             }
-            if (this.playerstate.status === "dashing") {
+            if (this.state.status === "dashing") {
                 this.animationRow = SpriteTypes.sliding;
                 this.calculateGameFrame(SpriteTypes.sliding);
                 this.stopAnimation(SpriteTypes.sliding);
             }
-            if (this.playerstate.status === "idle") {
+            if (this.state.status === "idle") {
                 this.animationRow = SpriteTypes.idle;
                 this.calculateGameFrame(SpriteTypes.idle);
                 return;
             }
-            if (this.playerstate.status === "moving") {
+            if (this.state.status === "moving") {
                 this.animationRow = SpriteTypes.walking;
                 this.calculateGameFrame(SpriteTypes.walking);
                 return;
@@ -182,7 +180,7 @@ export class Player extends Character {
         }
     }
     calculateGameFrame(spritetype) {
-        if (this.playerstate.direction === "right") {
+        if (this.state.direction === "right") {
             if (this.spriteposition > SpriteFrameCount[spritetype] - 1)
                 this.spriteposition = -1;
             this.spriteposition++;
@@ -196,40 +194,39 @@ export class Player extends Character {
     }
     checkMovementState() {
         if (this.y > this.goundLevel) {
-            this.playerstate.movement.type = "grounded";
+            this.state.movement.type = "grounded";
             this.y = this.goundLevel;
             this.previousY = this.goundLevel;
             this.gravity = 1;
         }
-        if (this.playerstate.movement.type === "airborne") {
-            if (this.playerstate.movement.phase === "starting") {
+        if (this.state.movement.type === "airborne") {
+            if (this.state.movement.phase === "starting") {
                 if (this.spriteposition ===
                     SpriteFrameCount[SpriteTypes.jumpstart] - 1) {
-                    this.playerstate.movement.phase = "ascending";
+                    this.state.movement.phase = "ascending";
                 }
             }
-            if (this.y < this.previousY &&
-                this.playerstate.movement.phase !== "starting") {
-                this.playerstate.movement.phase = "ascending";
+            if (this.y < this.previousY && this.state.movement.phase !== "starting") {
+                this.state.movement.phase = "ascending";
                 this.previousY = this.y;
             }
             else {
-                this.playerstate.movement.phase = "descending";
+                this.state.movement.phase = "descending";
                 this.previousY = this.y;
             }
         }
     }
     stopAnimation(spriteTyp) {
-        if (this.playerstate.direction === "right") {
+        if (this.state.direction === "right") {
             if (this.spriteposition === SpriteFrameCount[spriteTyp]) {
-                this.playerstate.status = "moving";
+                this.state.status = "moving";
                 this.checkShoot(spriteTyp);
             }
         }
         else {
             if (this.spriteposition <
                 this.maxFrameCount - SpriteFrameCount[spriteTyp] + 1) {
-                this.playerstate.status = "moving";
+                this.state.status = "moving";
                 this.checkShoot(spriteTyp);
             }
         }

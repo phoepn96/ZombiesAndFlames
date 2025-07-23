@@ -1,3 +1,4 @@
+import { Boss } from "./boss.class.ts";
 import { Hitbox } from "./hitbox.class.ts";
 import { Player } from "./player.class.ts";
 import { World } from "./world.class.ts";
@@ -9,7 +10,7 @@ export class Projectile {
   y!: number;
   world!: World;
   projectileSpeed!: number;
-  originClass!: Player;
+  originClass!: Player | Boss;
   ctx!: CanvasRenderingContext2D;
   spriteWidth!: number;
   spriteHeight!: number;
@@ -26,7 +27,11 @@ export class Projectile {
   hitboxOffsetWidth: number = -80;
   hitboxOffsetHeight: number = -70;
 
-  constructor(img: string, originClass: Player, ctx: CanvasRenderingContext2D) {
+  constructor(
+    img: string,
+    originClass: Player | Boss,
+    ctx: CanvasRenderingContext2D
+  ) {
     this.imgSrc = img;
     this.img = new Image();
     this.img.src = this.imgSrc;
@@ -49,7 +54,7 @@ export class Projectile {
       this.spriteHeight = 20;
       this.origin = "boss";
     }
-    this.direction = originClass.playerstate.direction;
+    this.direction = originClass.state.direction;
 
     this.hitbox = new Hitbox(
       this,

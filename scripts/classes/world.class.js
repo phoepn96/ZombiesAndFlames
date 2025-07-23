@@ -1,4 +1,5 @@
 import { Player } from "./player.class.js";
+import { Boss } from "./boss.class.js";
 export class World {
     canvas;
     ctx;
@@ -6,18 +7,32 @@ export class World {
     height;
     gravity = 1;
     player;
+    enemies = [];
     constructor(canvas, ctx) {
         this.canvas = canvas;
         this.ctx = ctx;
         this.width = canvas.width;
         this.height = canvas.height;
         this.player = new Player(this, 50, 280);
+        this.enemies = [new Boss(this, 200, 255)];
     }
     update() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.player.update();
+        this.updateEnemies();
     }
     draw() {
         this.player.draw();
+        this.drawEnemies();
+    }
+    drawEnemies() {
+        for (let i = 0; i < this.enemies.length; i++) {
+            this.enemies[i].draw();
+        }
+    }
+    updateEnemies() {
+        for (let i = 0; i < this.enemies.length; i++) {
+            this.enemies[i].update();
+        }
     }
 }

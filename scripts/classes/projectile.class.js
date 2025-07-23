@@ -46,7 +46,7 @@ export class Projectile {
             this.spriteHeight = 20;
             this.origin = "boss";
         }
-        this.direction = originClass.playerstate.direction;
+        this.direction = originClass.state.direction;
         this.hitbox = new Hitbox(this, this.projectileSizeWidth, this.projectileSizeHeight, this.hitboxOffsetX, this.hitboxOffsetY, this.hitboxOffsetWidth, this.hitboxOffsetHeight);
     }
     update() {

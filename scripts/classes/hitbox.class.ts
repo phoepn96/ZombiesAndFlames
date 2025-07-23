@@ -1,9 +1,10 @@
+import { Boss } from "./boss.class.ts";
 import { Player } from "./player.class.ts";
 import { Projectile } from "./projectile.class.ts";
 import { World } from "./world.class.ts";
 
 export class Hitbox {
-  originClass!: Player | Projectile;
+  originClass!: Player | Projectile | Boss;
   x!: number;
   y!: number;
   world!: World;
@@ -16,7 +17,7 @@ export class Hitbox {
   offsetHeight!: number;
 
   constructor(
-    originClass: Player | Projectile,
+    originClass: Player | Projectile | Boss,
     width: number,
     height: number,
     offsetX: number,
@@ -30,8 +31,8 @@ export class Hitbox {
     this.offsetY = offsetY;
     this.offsetWidth = offsetWidth;
     this.offsetHeight = offsetHeight;
-    this.x = originClass.x;
-    this.y = originClass.y;
+    this.x = originClass.x - this.offsetX;
+    this.y = originClass.y - this.offsetY;
     this.width = width + offsetWidth;
     this.height = height + offsetHeight;
   }

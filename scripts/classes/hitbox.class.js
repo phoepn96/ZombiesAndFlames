@@ -17,8 +17,8 @@ export class Hitbox {
         this.offsetY = offsetY;
         this.offsetWidth = offsetWidth;
         this.offsetHeight = offsetHeight;
-        this.x = originClass.x;
-        this.y = originClass.y;
+        this.x = originClass.x - this.offsetX;
+        this.y = originClass.y - this.offsetY;
         this.width = width + offsetWidth;
         this.height = height + offsetHeight;
     }

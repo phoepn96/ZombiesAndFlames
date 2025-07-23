@@ -4,6 +4,7 @@ export class Character {
   world!: World;
   x!: number;
   y!: number;
+  ctx!: CanvasRenderingContext2D;
 
   constructor(
     world: World,
@@ -13,5 +14,6 @@ export class Character {
     this.world = world;
     this.x = startingPositionX;
     this.y = startingPositionY;
+    this.ctx = this.world.ctx;
   }
 }

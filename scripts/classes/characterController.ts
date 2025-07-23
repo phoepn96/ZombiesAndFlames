@@ -1,4 +1,4 @@
-import { Player } from "./player.class";
+import { Player } from "./player.class.ts";
 
 export class CharacterController {
   keyManager: { [key: string]: boolean } = {};
@@ -10,45 +10,42 @@ export class CharacterController {
       this.keyManager[event.key] = true;
 
       if (event.key === "d" || event.key === "ArrowRight") {
-        player.playerstate.direction = "right";
-        player.playerstate.status = "moving";
+        player.state.direction = "right";
+        player.state.status = "moving";
         this.keyManager["a"] = false;
         this.keyManager["ArrowLeft"] = false;
       }
 
       if (event.key === "a" || event.key === "ArrowLeft") {
-        player.playerstate.direction = "left";
-        player.playerstate.status = "moving";
+        player.state.direction = "left";
+        player.state.status = "moving";
         this.keyManager["d"] = false;
         this.keyManager["ArrowRight"] = false;
       }
 
       if (
-        player.playerstate.movement.type === "grounded" &&
-        player.playerstate.status != "attacking"
+        player.state.movement.type === "grounded" &&
+        player.state.status != "attacking"
       ) {
         if (event.key === " ") {
           player.spriteposition = 0;
-          player.playerstate.movement = {
+          player.state.movement = {
             type: "airborne",
             phase: "starting",
           };
         }
       }
       if (event.key === "Control") {
-        if (!this.dashHandeler && this.player.playerstate.status != "dashing") {
+        if (!this.dashHandeler && this.player.state.status != "dashing") {
           player.spriteposition = 0;
-          player.playerstate.status = "dashing";
+          player.state.status = "dashing";
           this.dashHandeler = true;
         }
       }
       if (event.key === "f") {
-        if (
-          !this.attackHandler &&
-          this.player.playerstate.status != "attacking"
-        ) {
+        if (!this.attackHandler && this.player.state.status != "attacking") {
           player.spriteposition = 0;
-          player.playerstate.status = "attacking";
+          player.state.status = "attacking";
           this.attackHandler = true;
         }
       }
@@ -61,10 +58,10 @@ export class CharacterController {
         this.keyManager["ArrowLeft"] === false &&
         this.keyManager["a"] === false &&
         this.keyManager["ArrowRight"] === false &&
-        this.player.playerstate.status != "attacking" &&
-        this.player.playerstate.status != "dashing"
+        this.player.state.status != "attacking" &&
+        this.player.state.status != "dashing"
       ) {
-        player.playerstate.status = "idle";
+        player.state.status = "idle";
       }
 
       if (event.key === "Control") {
