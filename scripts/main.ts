@@ -27,5 +27,6 @@ function gameLoop(timestamp: number): void {
   lastTime = timestamp;
   requestAnimationFrame(gameLoop);
 }
+console.log(world);
 
 requestAnimationFrame(gameLoop);

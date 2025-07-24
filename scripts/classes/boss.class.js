@@ -3,7 +3,10 @@ import { Hitbox } from "./hitbox.class.js";
 import { Projectile } from "./projectile.class.js";
 export class Boss extends Enemie {
     img;
-    imgSrc = "../../assets/spritesheets/reaper/reaper.png";
+    imgRight;
+    imgSrcRight = "../../assets/spritesheets/reaper/reaper.png";
+    imgLeft;
+    imgSrcLeft = "../../assets/spritesheets/reaper/reaperMirrored.png";
     width = 130;
     height = 130;
     frameWidth = 909.58;
@@ -23,11 +26,16 @@ export class Boss extends Enemie {
     projectileSpeed = 5;
     attackCooldown = 3;
     isAttacking = false;
+    attackOnCooldown = false;
+    maxFrameCount = 23;
     constructor(world, startingX, startingY) {
         super(world, startingX, startingY);
-        this.img = new Image();
-        this.img.src = this.imgSrc;
+        this.imgRight = new Image();
+        this.imgRight.src = this.imgSrcRight;
+        this.imgLeft = new Image();
+        this.imgLeft.src = this.imgSrcLeft;
         this.hitbox = new Hitbox(this, this.width, this.height, this.offsetX, this.offsetY, this.offsetWidth, this.offsetHeight);
+        this.img = this.imgRight;
     }
     update() {
         this.hitbox.update();
@@ -42,9 +50,11 @@ export class Boss extends Enemie {
     checkDirection() {
         if (this.world.player.x < this.x) {
             this.state.direction = "left";
+            this.img = this.imgLeft;
         }
         else {
             this.state.direction = "right";
+            this.img = this.imgRight;
         }
     }
     walk() {
@@ -57,6 +67,11 @@ export class Boss extends Enemie {
     }
     attack() {
         this.projectiles.push(new Projectile(this.projectileImgSrc, this, this.ctx));
+        this.isAttacking = false;
+        this.attackOnCooldown = true;
+        setTimeout(() => {
+            this.attackOnCooldown = false;
+        }, this.attackCooldown * 1000);
     }
     animateAction() {
         if (this.state.status === "dead") {
@@ -84,15 +99,16 @@ export class Boss extends Enemie {
         }
     }
     decideAction() {
+        if (this.isAttacking)
+            return;
         if (this.world.player.x <= this.x + this.world.canvas.width &&
-            this.world.player.x >= this.x - this.world.canvas.width &&
-            !this.isAttacking) {
+            this.world.player.x >= this.x - this.world.canvas.width) {
             this.state.status = "walking";
             this.walk();
         }
         if (this.world.player.x <= this.x + this.attackRange &&
             this.world.player.x >= this.x - this.attackRange &&
-            !this.isAttacking) {
+            !this.attackOnCooldown) {
             this.spritePosition = 0;
             this.isAttacking = true;
             this.state.status = "attacking";
@@ -100,21 +116,45 @@ export class Boss extends Enemie {
     }
     animateSprite(spriteTyp) {
         if (this.state.direction === "right") {
-            if (this.spritePosition > SpriteFrameCount[spriteTyp])
+            if (this.spritePosition > SpriteFrameCount[spriteTyp] - 1)
                 this.spritePosition = -1;
             this.spritePosition++;
         }
+        else {
+            if (this.spritePosition <
+                this.maxFrameCount - SpriteFrameCount[spriteTyp] + 1)
+                this.spritePosition = this.maxFrameCount + 1;
+            this.spritePosition--;
+        }
     }
     stopAnimation(spriteTyp) {
-        if (this.spritePosition > SpriteFrameCount[spriteTyp]) {
-            if (spriteTyp === SpriteTypes.dying) {
-                console.log("dead");
+        if (this.state.direction === "right") {
+            if (this.spritePosition > SpriteFrameCount[spriteTyp] - 1) {
+                if (spriteTyp === SpriteTypes.dying) {
+                    console.log("dead");
+                }
+                else if (spriteTyp === SpriteTypes.slashing) {
+                    this.attack();
+                    this.state.status = "walking";
+                }
+                else {
+                    this.state.status = "idle";
+                }
             }
-            else if (spriteTyp === SpriteTypes.slashing) {
-                this.attack();
-            }
-            else {
-                this.state.status = "idle";
+        }
+        else {
+            if (this.spritePosition <
+                this.maxFrameCount - SpriteFrameCount[spriteTyp] + 1) {
+                if (spriteTyp === SpriteTypes.dying) {
+                    console.log("dead");
+                }
+                else if (spriteTyp === SpriteTypes.slashing) {
+                    this.attack();
+                    this.state.status = "walking";
+                }
+                else {
+                    this.state.status = "idle";
+                }
             }
         }
     }

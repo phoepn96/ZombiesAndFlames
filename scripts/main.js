@@ -19,4 +19,5 @@ function gameLoop(timestamp) {
     lastTime = timestamp;
     requestAnimationFrame(gameLoop);
 }
+console.log(world);
 requestAnimationFrame(gameLoop);
