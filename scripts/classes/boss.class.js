@@ -42,10 +42,13 @@ export class Boss extends Enemie {
         this.checkDirection();
         this.decideAction();
         this.animateAction();
+        this.updateProj();
+        this.removeProjectiles();
     }
     draw() {
         this.ctx.drawImage(this.img, this.frameWidth * this.spritePosition, this.frameHeight * this.animationRow, this.frameWidth, this.frameHeight, this.x, this.y, this.width, this.height);
         this.hitbox.draw();
+        this.drawProj();
     }
     checkDirection() {
         if (this.world.player.x < this.x) {
@@ -67,6 +70,7 @@ export class Boss extends Enemie {
     }
     attack() {
         this.projectiles.push(new Projectile(this.projectileImgSrc, this, this.ctx));
+        console.log("shoot", this.projectiles);
         this.isAttacking = false;
         this.attackOnCooldown = true;
         setTimeout(() => {
@@ -157,6 +161,21 @@ export class Boss extends Enemie {
                 }
             }
         }
+    }
+    updateProj() {
+        for (let i = 0; i < this.projectiles.length; i++) {
+            this.projectiles[i].update();
+        }
+    }
+    drawProj() {
+        for (let i = 0; i < this.projectiles.length; i++) {
+            this.projectiles[i].draw();
+        }
+    }
+    removeProjectiles() {
+        this.projectiles = this.projectiles.filter((projectile) => {
+            return !projectile.removeProj;
+        });
     }
 }
 var SpriteTypes;
