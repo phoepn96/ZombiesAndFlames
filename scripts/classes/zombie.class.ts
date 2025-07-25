@@ -3,10 +3,7 @@ import { Hitbox } from "./hitbox.class.ts";
 import { World } from "./world.class.ts";
 
 export class Zombie1 extends Enemie {
-  img!: HTMLImageElement;
-  imgRight!: HTMLImageElement;
   imgSrcRight: string = "../../assets/spritesheets/zombie1/zombie1.png";
-  imgLeft!: HTMLImageElement;
   imgSrcLeft: string = "../../assets/spritesheets/zombie1/zombie1Mirrored.png";
   state: State = {
     direction: "right",
@@ -20,6 +17,8 @@ export class Zombie1 extends Enemie {
   offsetHeight: number = 0;
   width: number = 100;
   height: number = 100;
+  frameWidth: number = 909.58;
+  frameHeight: number = 908.88;
 
   constructor(world: World, startingX: number, startingY: number) {
     super(world, startingX, startingY);
@@ -28,6 +27,8 @@ export class Zombie1 extends Enemie {
     this.imgLeft = new Image();
     this.imgLeft.src = this.imgSrcLeft;
     this.img = this.imgRight;
+    this.speed = 2;
+    this.attackRange = 50;
 
     this.hitbox = new Hitbox(
       this,
@@ -39,14 +40,33 @@ export class Zombie1 extends Enemie {
       this.offsetHeight
     );
   }
+
+  update() {
+    this.hitbox.update();
+    this.checkDirection();
+    this.decideAction();
+    this.animateAction();
+  }
+
+  draw() {
+    this.ctx.drawImage(
+      this.img,
+      this.frameWidth * this.spritePosition,
+      this.frameHeight * this.animationRow,
+      this.frameWidth,
+      this.frameHeight,
+      this.x,
+      this.y,
+      this.width,
+      this.height
+    );
+    this.hitbox.draw();
+  }
 }
 
 export class Zombie2 extends Enemie {
-  img!: HTMLImageElement;
-  imgRight!: HTMLImageElement;
-  imgSrcRight: string = "../../assets/spritesheets/zombie1/zombie2.png";
-  imgLeft!: HTMLImageElement;
-  imgSrcLeft: string = "../../assets/spritesheets/zombie1/zombie2Mirrored.png";
+  imgSrcRight: string = "../../assets/spritesheets/zombie2/zombie2.png";
+  imgSrcLeft: string = "../../assets/spritesheets/zombie2/zombie2Mirrored.png";
   state: State = {
     direction: "right",
     status: "idle",
@@ -59,6 +79,8 @@ export class Zombie2 extends Enemie {
   offsetHeight: number = 0;
   width: number = 100;
   height: number = 100;
+  frameWidth: number = 909.58;
+  frameHeight: number = 908.88;
 
   constructor(world: World, startingX: number, startingY: number) {
     super(world, startingX, startingY);
@@ -67,6 +89,8 @@ export class Zombie2 extends Enemie {
     this.imgLeft = new Image();
     this.imgLeft.src = this.imgSrcLeft;
     this.img = this.imgRight;
+    this.speed = 2;
+    this.attackRange = 50;
 
     this.hitbox = new Hitbox(
       this,
@@ -78,23 +102,30 @@ export class Zombie2 extends Enemie {
       this.offsetHeight
     );
   }
+  update() {
+    this.hitbox.update();
+    this.checkDirection();
+    this.decideAction();
+    this.animateAction();
+  }
+
+  draw() {
+    this.ctx.drawImage(
+      this.img,
+      this.frameWidth * this.spritePosition,
+      this.frameHeight * this.animationRow,
+      this.frameWidth,
+      this.frameHeight,
+      this.x,
+      this.y,
+      this.width,
+      this.height
+    );
+    this.hitbox.draw();
+  }
 }
 
 interface State {
   direction: "left" | "right";
   status: "attacking" | "hurt" | "dead" | "walking" | "idle";
 }
-
-enum SpriteTypes {
-  dying = 0,
-  hurt = 2,
-  walking = 6,
-  slashing = 8,
-}
-
-const SpriteFrameCount: Record<SpriteTypes, number> = {
-  [SpriteTypes.dying]: 16,
-  [SpriteTypes.hurt]: 11,
-  [SpriteTypes.walking]: 23,
-  [SpriteTypes.slashing]: 11,
-};

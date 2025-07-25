@@ -1,5 +1,6 @@
 import { Player } from "./player.class.js";
 import { Boss } from "./boss.class.js";
+import { Zombie1, Zombie2 } from "./zombie.class.js";
 export class World {
     canvas;
     ctx;
@@ -14,7 +15,11 @@ export class World {
         this.width = canvas.width;
         this.height = canvas.height;
         this.player = new Player(this, 50, 280);
-        this.enemies = [new Boss(this, 200, 255)];
+        this.enemies = [
+            new Boss(this, 500, 255),
+            new Zombie1(this, 300, 255),
+            new Zombie2(this, 100, 280),
+        ];
     }
     update() {
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
